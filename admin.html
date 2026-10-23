@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản trị – Glow Beauty Admin Dashboard</title>
+    <meta name="description" content="Trang quản trị nội bộ Glow Beauty – Quản lý lịch hẹn, FAQ và khách hàng." />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      body { overflow: hidden; }
+      .admin-layout { height: 100vh; }
+      .admin-main { height: 100vh; overflow-y: auto; }
+    </style>
+  </head>
+  <body>
+    <div class="admin-layout">
+      <!-- ========== SIDEBAR ========== -->
+      <aside class="admin-sidebar">
+        <div class="sidebar-logo">
+          <div class="logo">
+            <div class="logo-icon" style="width:32px;height:32px;font-size:16px;">✨</div>
+            <div>
+              <div class="logo-text" style="font-size:16px;">Glow Beauty</div>
+              <div class="logo-tagline">Admin Dashboard</div>
+            </div>
+          </div>
+        </div>
+
+        <ul class="sidebar-menu">
+          <li>
+            <a href="#" data-section="section-overview" class="active">
+              <span class="menu-icon">📊</span> Tổng quan
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="section-bookings">
+              <span class="menu-icon">📅</span> Lịch hẹn
+              <span class="sidebar-badge" id="pending-badge">0</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" data-section="section-faq">
+              <span class="menu-icon">❓</span> Quản lý FAQ
+            </a>
+          </li>
+        </ul>
+
+        <div style="padding:16px 20px;border-top:1px solid var(--border);margin-top:auto;">
+          <a href="index.html" class="btn btn-secondary" style="width:100%;justify-content:center;font-size:13px;">
+            ← Về trang chủ
+          </a>
+        </div>
+      </aside>
+
+      <!-- ========== MAIN ========== -->
+      <main class="admin-main">
+        <div style="padding:32px;">
+
+          <!-- ===== SECTION: TỔNG QUAN ===== -->
+          <section id="section-overview" class="admin-section">
+            <div class="admin-topbar">
+              <div class="page-title">
+                <h1>📊 Tổng quan</h1>
+                <p>Dữ liệu hoạt động của Glow Beauty</p>
+              </div>
+              <div style="font-size:13px;color:var(--text-muted);" id="current-time"></div>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-icon">📅</div>
+                <div class="stat-number" id="stat-total" style="color:var(--primary);">0</div>
+                <div class="stat-label">Tổng lịch hẹn</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon">⏳</div>
+                <div class="stat-number" id="stat-pending" style="color:var(--warning);">0</div>
+                <div class="stat-label">Chờ xác nhận</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-number" id="stat-done" style="color:var(--success);">0</div>
+                <div class="stat-label">Đã hoàn thành</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon">❓</div>
+                <div class="stat-number" id="stat-faq-count" style="color:var(--info);">0</div>
+                <div class="stat-label">Câu hỏi FAQ</div>
+              </div>
+            </div>
+
+            <!-- Quick actions -->
+            <div class="table-card" style="padding:24px;">
+              <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">⚡ Thao tác nhanh</h2>
+              <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                <button class="btn btn-primary" onclick="showSection('section-bookings')">
+                  📅 Xem lịch hẹn
+                </button>
+                <button class="btn btn-secondary" onclick="showSection('section-faq')">
+                  ❓ Quản lý FAQ
+                </button>
+                <button class="btn btn-danger" onclick="deleteAllDone()">
+                  🗑️ Dọn lịch đã xử lý
+                </button>
+              </div>
+            </div>
+
+            <!-- Upcoming bookings preview -->
+            <div class="table-card" style="margin-top:20px;">
+              <div class="table-header">
+                <h2>📋 Lịch hẹn sắp tới</h2>
+                <button class="btn btn-secondary btn-sm" onclick="showSection('section-bookings')">Xem tất cả</button>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Khách hàng</th>
+                      <th>Ngày & Giờ</th>
+                      <th>Nội dung</th>
+                      <th>Trạng thái</th>
+                    </tr>
+                  </thead>
+                  <tbody id="overview-tbody">
+                    <tr>
+                      <td colspan="4">
+                        <div class="empty-state" style="padding:32px;">
+                          <div class="empty-state-icon">📅</div>
+                          <p>Chưa có lịch hẹn nào</p>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- ===== SECTION: LỊCH HẸN ===== -->
+          <section id="section-bookings" class="admin-section hidden">
+            <div class="admin-topbar">
+              <div class="page-title">
+                <h1>📅 Quản lý lịch hẹn</h1>
+                <p>Xem, cập nhật trạng thái và xóa lịch hẹn</p>
+              </div>
+              <button class="btn btn-danger btn-sm" onclick="deleteAllDone()">
+                🗑️ Xóa đã hoàn thành/hủy
+              </button>
+            </div>
+
+            <div class="table-card">
+              <div class="table-header">
+                <h2>
+                  Danh sách lịch hẹn
+                  <span style="font-size:13px;color:var(--text-muted);font-weight:400;">
+                    (<span id="bookings-count">0</span> kết quả)
+                  </span>
+                </h2>
+                <div class="table-actions">
+                  <input
+                    type="text"
+                    id="search-input"
+                    class="search-input"
+                    placeholder="🔍 Tìm theo tên, SĐT..."
+                  />
+                  <select id="status-filter" class="filter-select">
+                    <option value="all">Tất cả trạng thái</option>
+                    <option value="pending">Chờ xác nhận</option>
+                    <option value="confirmed">Đã xác nhận</option>
+                    <option value="done">Hoàn thành</option>
+                    <option value="cancelled">Đã hủy</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Khách hàng</th>
+                      <th>Ngày & Giờ</th>
+                      <th>Nội dung tư vấn</th>
+                      <th>Trạng thái</th>
+                      <th>Đặt lúc</th>
+                      <th>Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody id="bookings-tbody"></tbody>
+                </table>
+                <div id="bookings-empty" class="empty-state hidden">
+                  <div class="empty-state-icon">📭</div>
+                  <h3>Không có lịch hẹn</h3>
+                  <p>Chưa có lịch hẹn nào phù hợp với bộ lọc hiện tại.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ===== SECTION: FAQ ===== -->
+          <section id="section-faq" class="admin-section hidden">
+            <div class="admin-topbar">
+              <div class="page-title">
+                <h1>❓ Quản lý Kiến thức FAQ</h1>
+                <p>Thêm, sửa, xóa câu hỏi để chatbot học và trả lời khách hàng ngay lập tức</p>
+              </div>
+              <div style="display:flex;gap:10px;">
+                <button class="btn btn-secondary btn-sm" onclick="handleResetFAQs()">
+                  🔄 Khôi phục mặc định
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="openFAQModal()">
+                  ➕ Thêm câu hỏi mới
+                </button>
+              </div>
+            </div>
+
+            <div class="table-card" style="margin-bottom:20px;padding:16px 20px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span style="font-size:18px;">📚</span>
+                  <span style="font-weight:700;font-size:15px;">Danh sách câu hỏi</span>
+                  <span style="font-size:12px;color:var(--text-muted);">(<span id="faq-count-badge">0</span> câu hỏi)</span>
+                </div>
+                <div style="flex:1;max-width:320px;">
+                  <input
+                    type="text"
+                    id="faq-search-input"
+                    class="search-input"
+                    style="width:100%;"
+                    placeholder="🔍 Tìm câu hỏi, từ khóa, câu trả lời..."
+                    oninput="handleFAQSearch(this.value)"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div id="faq-list"></div>
+            <div id="faq-empty" class="empty-state hidden" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);">
+              <div class="empty-state-icon">🔍</div>
+              <h3>Không tìm thấy câu hỏi</h3>
+              <p>Thử tìm từ khóa khác hoặc bấm nút "+ Thêm câu hỏi mới" ở trên.</p>
+            </div>
+          </section>
+
+        </div><!-- /padding -->
+      </main>
+    </div><!-- /admin-layout -->
+
+    <!-- ========== FAQ MODAL (THÊM / SỬA) ========== -->
+    <div id="faq-modal" class="hidden" role="dialog" aria-modal="true" style="position:fixed;inset:0;z-index:2500;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);">
+      <div class="modal-content" style="max-width:540px;">
+        <div class="modal-header">
+          <div class="modal-title">
+            <h2 id="faq-modal-title">➕ Thêm câu hỏi FAQ mới</h2>
+            <p>Chatbot sẽ cập nhật câu trả lời ngay sau khi lưu</p>
+          </div>
+          <button class="modal-close" onclick="closeFAQModal()">✕</button>
+        </div>
+
+        <form class="modal-body" id="faq-form" onsubmit="handleSaveFAQ(event)" novalidate>
+          <input type="hidden" id="faq-id" />
+          
+          <div class="form-group">
+            <label for="faq-question">Câu hỏi thường gặp <span>*</span></label>
+            <input
+              type="text"
+              id="faq-question"
+              class="form-control"
+              placeholder="VD: Hôm nay shop có ưu đãi gì đặc biệt không?"
+              required
+            />
+            <div class="form-error" id="faq-q-error"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="faq-tags">Từ khóa nhận diện (ngăn cách bằng dấu phẩy) <span>*</span></label>
+            <input
+              type="text"
+              id="faq-tags"
+              class="form-control"
+              placeholder="VD: ưu đãi hôm nay, quà tặng, khuyến mãi, tặng son"
+              required
+            />
+            <small style="font-size:12px;color:var(--text-muted);margin-top:2px;">
+              💡 Giúp chatbot hiểu đúng ý ngay cả khi khách hỏi bằng nhiều cách khác nhau
+            </small>
+            <div class="form-error" id="faq-tags-error"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="faq-answer">Nội dung câu trả lời của Shop <span>*</span></label>
+            <textarea
+              id="faq-answer"
+              class="form-control"
+              rows="4"
+              placeholder="VD: Hôm nay khi mua đơn từ 300.000đ, bạn sẽ được tặng ngay 1 thỏi son dưỡng mini Glow Balm và freeship toàn quốc nhé!"
+              required
+            ></textarea>
+            <div class="form-error" id="faq-a-error"></div>
+          </div>
+
+          <div class="modal-footer" style="padding:0;margin-top:12px;">
+            <button type="button" class="btn btn-secondary" onclick="closeFAQModal()">Hủy bỏ</button>
+            <button type="submit" class="btn btn-primary" id="faq-submit-btn">💾 Lưu câu hỏi</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Admin toast -->
+    <div id="admin-toast"
+      style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:3000;display:flex;flex-direction:column;gap:8px;pointer-events:none;">
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/data.js"></script>
+    <script src="js/admin.js"></script>
+    <script>
+      // Đồng hồ real-time
+      function updateClock() {
+        const el = document.getElementById("current-time");
+        if (el) {
+          el.textContent = new Date().toLocaleString("vi-VN", {
+            weekday: "long", year: "numeric", month: "long",
+            day: "numeric", hour: "2-digit", minute: "2-digit"
+          });
+        }
+      }
+      updateClock();
+      setInterval(updateClock, 60000);
+
+      // Render overview table khi init
+      document.addEventListener("DOMContentLoaded", () => {
+        const bookings = JSON.parse(localStorage.getItem("glow_bookings") || "[]");
+        const upcoming = bookings
+          .filter(b => b.status === "pending" || b.status === "confirmed")
+          .slice(0, 5);
+
+        const tbody = document.getElementById("overview-tbody");
+        if (!tbody) return;
+
+        if (upcoming.length === 0) return;
+
+        tbody.innerHTML = upcoming.map(b => `
+          <tr>
+            <td>
+              <div style="font-weight:600;">${escapeAdminHtml(b.name)}</div>
+              <div style="font-size:12px;color:var(--text-muted);">${b.phone}</div>
+            </td>
+            <td>
+              <div>${formatAdminDate(b.date)}</div>
+              <div style="font-size:12px;color:var(--text-muted);">${b.time}</div>
+            </td>
+            <td style="font-size:13px;color:var(--text-soft);">${escapeAdminHtml(b.topic || "Tư vấn chung")}</td>
+            <td>
+              <span class="badge ${b.status === 'pending' ? 'badge-pending' : 'badge-confirmed'}">
+                ${b.status === 'pending' ? '⏳ Chờ xác nhận' : '✅ Đã xác nhận'}
+              </span>
+            </td>
+          </tr>`).join("");
+
+        // Update pending badge
+        const pending = bookings.filter(b => b.status === "pending").length;
+        document.getElementById("pending-badge").textContent = pending;
+      });
+
+      function escapeAdminHtml(str) {
+        return String(str||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+      }
+      function formatAdminDate(d) {
+        if (!d) return "–";
+        return new Date(d + "T00:00:00").toLocaleDateString("vi-VN",{day:"2-digit",month:"2-digit",year:"numeric"});
+      }
+    </script>
+  </body>
+</html>

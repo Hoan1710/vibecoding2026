@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Glow Beauty – Mỹ phẩm chính hãng, tư vấn chuyên nghiệp</title>
+    <meta name="description" content="Glow Beauty – Shop mỹ phẩm chính hãng tại TP.HCM. Tư vấn skincare & makeup 24/7 qua AI chatbot. Đặt lịch tư vấn miễn phí với chuyên gia." />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- ========== HEADER ========== -->
+    <header class="site-header">
+      <div class="logo">
+        <div class="logo-icon">✨</div>
+        <div>
+          <div class="logo-text">Glow Beauty</div>
+          <div class="logo-tagline">Tỏa sáng theo cách của bạn</div>
+        </div>
+      </div>
+      <nav class="header-nav">
+        <button class="btn-nav active" onclick="location.href='index.html'">🏠 Trang chủ</button>
+        <button class="btn-nav" onclick="openBookingModal()">📅 Đặt lịch</button>
+        <button class="btn-nav" onclick="location.href='admin.html'">⚙️ Quản trị</button>
+      </nav>
+    </header>
+
+    <!-- ========== HERO ========== -->
+    <section class="hero">
+      <div class="hero-badge">
+        <span>🌸</span>
+        AI-powered Beauty Advisor
+      </div>
+      <h1>
+        Tư vấn mỹ phẩm<br />
+        <span>thông minh, 24/7</span>
+      </h1>
+      <p>
+        Chatbot AI của Glow Beauty sẵn sàng giải đáp mọi thắc mắc về skincare, makeup và đặt lịch hẹn với chuyên gia bất cứ lúc nào.
+      </p>
+      <div class="hero-actions">
+        <button class="btn btn-primary" onclick="openChat()">
+          💬 Chat với AI ngay
+        </button>
+        <button class="btn btn-secondary" onclick="openBookingModal()">
+          📅 Đặt lịch tư vấn
+        </button>
+      </div>
+    </section>
+
+    <!-- ========== FEATURES ========== -->
+    <section class="features">
+      <div class="section-title">
+        <h2>Tại sao chọn Glow Beauty?</h2>
+        <p>Nền tảng tư vấn mỹ phẩm thông minh, được hỗ trợ bởi AI</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🤖</div>
+          <h3>AI Chatbot 24/7</h3>
+          <p>Trả lời hàng chục câu hỏi thường gặp về sản phẩm, giá, giao hàng mọi lúc mọi nơi.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🧴</div>
+          <h3>Tư vấn da cá nhân</h3>
+          <p>Gợi ý sản phẩm phù hợp với loại da dầu, khô, nhạy cảm hay da hỗn hợp của bạn.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📅</div>
+          <h3>Đặt lịch dễ dàng</h3>
+          <p>Chọn thời gian thuận tiện, đặt lịch tư vấn 1-1 với chuyên gia trong vài click.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">✅</div>
+          <h3>Hàng chính hãng 100%</h3>
+          <p>Tất cả sản phẩm có chứng từ nhập khẩu, tem phụ, hoàn tiền nếu hàng giả.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🚀</div>
+          <h3>Giao hàng nhanh</h3>
+          <p>Nội thành TP.HCM 2–4 giờ. Miễn phí ship đơn từ 499.000đ toàn quốc.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎁</div>
+          <h3>Ưu đãi thành viên</h3>
+          <p>Giảm 15% đơn đầu, tích điểm đổi quà, flash sale mỗi tuần.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== CHAT FAB ========== -->
+    <button id="chat-fab" aria-label="Mở chat tư vấn">
+      💬
+      <span class="badge">1</span>
+    </button>
+
+    <!-- ========== CHAT WINDOW ========== -->
+    <div id="chat-window" class="hidden" role="dialog" aria-label="Chat tư vấn Glow Beauty">
+      <div class="chat-header">
+        <div class="chat-avatar">✨</div>
+        <div class="chat-header-info">
+          <div class="chat-header-name">Glow AI</div>
+          <div class="chat-header-status">Trực tuyến – Sẵn sàng tư vấn</div>
+        </div>
+        <div class="chat-header-actions">
+          <button class="chat-header-btn" title="Đặt lịch" onclick="openBookingModal()">📅</button>
+          <button class="chat-header-btn" id="close-chat" title="Đóng" aria-label="Đóng chat">✕</button>
+        </div>
+      </div>
+
+      <div id="chat-messages" role="log" aria-live="polite" aria-label="Tin nhắn"></div>
+
+      <!-- Starter chips -->
+      <div class="starter-chips">
+        <button class="chip" onclick="sendMessage('Shop mở cửa lúc mấy giờ?')">🕐 Giờ mở cửa</button>
+        <button class="chip" onclick="sendMessage('Sản phẩm có chính hãng không?')">✅ Hàng chính hãng</button>
+        <button class="chip" onclick="sendMessage('Giao hàng mất bao lâu?')">🚀 Thời gian giao</button>
+        <button class="chip" onclick="sendMessage('Làm sao biết sản phẩm phù hợp với da tôi?')">🧴 Tư vấn da</button>
+      </div>
+
+      <div class="chat-input-area">
+        <textarea
+          id="chat-input"
+          placeholder="Nhập câu hỏi của bạn..."
+          rows="1"
+          aria-label="Nhập tin nhắn"
+        ></textarea>
+        <button id="send-btn" aria-label="Gửi tin nhắn">➤</button>
+      </div>
+    </div>
+
+    <!-- ========== BOOKING MODAL ========== -->
+    <div id="booking-modal" class="hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-title">
+            <h2 id="modal-title">📅 Đặt lịch tư vấn</h2>
+            <p>Chuyên gia sẽ liên hệ xác nhận trong 30 phút</p>
+          </div>
+          <button class="modal-close" onclick="closeBookingModal()" aria-label="Đóng">✕</button>
+        </div>
+
+        <form class="modal-body" id="booking-form" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="booking-name">Họ và tên <span>*</span></label>
+              <input
+                type="text"
+                id="booking-name"
+                class="form-control"
+                placeholder="Nguyễn Thị Mai"
+                autocomplete="name"
+              />
+              <div class="form-error" id="name-error"></div>
+            </div>
+            <div class="form-group">
+              <label for="booking-phone">Số điện thoại <span>*</span></label>
+              <input
+                type="tel"
+                id="booking-phone"
+                class="form-control"
+                placeholder="0901 234 567"
+                autocomplete="tel"
+              />
+              <div class="form-error" id="phone-error"></div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="booking-date">Ngày hẹn <span>*</span></label>
+              <input
+                type="date"
+                id="booking-date"
+                class="form-control"
+              />
+              <div class="form-error" id="date-error"></div>
+            </div>
+            <div class="form-group">
+              <label for="booking-time">Giờ hẹn <span>*</span></label>
+              <select id="booking-time" class="form-control filter-select" style="width:100%;">
+                <option value="">-- Chọn giờ --</option>
+                <option value="08:00">08:00</option>
+                <option value="08:30">08:30</option>
+                <option value="09:00">09:00</option>
+                <option value="09:30">09:30</option>
+                <option value="10:00">10:00</option>
+                <option value="10:30">10:30</option>
+                <option value="11:00">11:00</option>
+                <option value="11:30">11:30</option>
+                <option value="13:00">13:00</option>
+                <option value="13:30">13:30</option>
+                <option value="14:00">14:00</option>
+                <option value="14:30">14:30</option>
+                <option value="15:00">15:00</option>
+                <option value="15:30">15:30</option>
+                <option value="16:00">16:00</option>
+                <option value="16:30">16:30</option>
+                <option value="17:00">17:00</option>
+                <option value="18:00">18:00</option>
+                <option value="19:00">19:00</option>
+                <option value="20:00">20:00</option>
+              </select>
+              <div class="form-error" id="time-error"></div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="booking-topic">Nội dung cần tư vấn</label>
+            <textarea
+              id="booking-topic"
+              class="form-control"
+              placeholder="VD: Tôi cần tư vấn routine dưỡng da cho da dầu mụn..."
+              rows="3"
+            ></textarea>
+          </div>
+
+          <div style="font-size:12px;color:var(--text-muted);background:var(--bg3);border-radius:8px;padding:10px 12px;line-height:1.6;">
+            🔒 Thông tin của bạn chỉ được dùng để liên hệ tư vấn và sẽ không được chia sẻ với bên thứ ba.
+          </div>
+        </form>
+
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="closeBookingModal()">Hủy bỏ</button>
+          <button class="btn btn-primary" onclick="submitBooking()">
+            ✅ Xác nhận đặt lịch
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== TOAST ========== -->
+    <div id="toast-container" aria-live="polite"></div>
+
+    <!-- ========== SCRIPTS ========== -->
+    <script src="js/data.js"></script>
+    <script src="js/chat.js"></script>
+  </body>
+</html>
